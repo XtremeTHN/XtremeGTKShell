@@ -1,0 +1,2 @@
+asd = "sad"
+print("loaded")
