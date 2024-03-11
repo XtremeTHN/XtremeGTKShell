@@ -11,6 +11,9 @@ gi.require_versions({'Gtk': '4.0', 'Gtk4LayerShell': '1.0'})
 from gi.repository import Gtk
 from gi.repository import Gtk4LayerShell
 
+from xgs.widgets.window import Window
+from xgs.style import warn, error, info
+
 CONFIG_PATH=os.path.expanduser("~/.config/xgs")
 
 def load_conf_file(path=None):
@@ -25,19 +28,22 @@ def load_conf_file(path=None):
             print("failed. see source code for more information")
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-
-        print(dir(module))
     else:
-        print("config file doesn't exists")
+        error("config file doesn't exists")
 
 def init():
     def on_activate(app):
+        Window.app = app
+        
+        info("Loading config file...")
         load_conf_file("./src/test.py")
-
+    
     app = Gtk.Application(application_id='com.github.XtremeTHN.XtremeGtkShell')
     app.connect('activate', on_activate)
-
-    app.run([])
+    try:
+        app.run([])
+    except (KeyboardInterrupt, EOFError):
+        warn("Exiting...")
 
 if __name__ == "__main__":
     init()
