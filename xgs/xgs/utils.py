@@ -21,11 +21,6 @@ class GArray(GObject.GObject):
         except ValueError:
             return -1
 
-StartTime=time.time()
-
-def action() :
-    print('action ! -> time : {:.1f}s'.format(time.time()-StartTime))
-
 class setInterval :
     def __init__(self,interval, callback) :
         self.interval=interval

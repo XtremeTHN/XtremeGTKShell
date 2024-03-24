@@ -1,18 +1,22 @@
 from gi.repository import Gtk
 
-class Binded:
-    def __init__(self)
+from xgs.style import error
 
-class Bindable:
-    def __init__(self, widget: Gtk.Widget):
-        self.widget = widget
+class Bindable(Gtk.Widget):
+    def __init__(self):
+        self.bindable_widget = self
+        self.bindable_prop_name = ""
+        self.bindable_transform_func = None
 
-    def bind(self,prop, transform_func=None):
-        prop_spec = self.widget.find_property(prop)
-        self.prop_name = ""
+    def bind(self,prop):
+        prop_spec = self.bindable_widget.find_property(prop)
+        self.bindable_prop_name = ""
         if prop_spec is not None:
-            self.prop_name = prop
+            self.bindable_prop_name = prop
+            return self
         else:
+            error("Programming error")
             raise ValueError(f"The property {prop} doesn't exists")
-
     
+    def transform(self, function):
+        self.bindable_transform_func = function
