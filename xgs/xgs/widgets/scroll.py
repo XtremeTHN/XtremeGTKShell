@@ -1,10 +1,15 @@
 from xgs.services.binding import Bindable
 from xgs.widgets.misc import ShellWidget
+from xgs.widgets.box import Box
 from xgs.style import warn, info
 from gi.repository import Gtk
 
+from typing import Literal
+
 class Scrollable(Gtk.ScrolledWindow, ShellWidget):
-    def __init__(self, vscroll="automatic", hscroll="automatic", child=None, **kwargs):
+    def __init__(self, vscroll: Literal["automatic", "always", "external", "never", "minimum", "natural"] = "automatic", 
+                 hscroll: Literal["automatic", "always", "external", "never", "minimum", "natural"]="automatic", 
+                 child=None, **kwargs):
         Gtk.ScrolledWindow.__init__(self, child=child, **kwargs)
         ShellWidget.__init__(self)
         # super().__init__(child=child, **kwargs)
@@ -25,12 +30,8 @@ class Scrollable(Gtk.ScrolledWindow, ShellWidget):
 
 
 
-class ScrollableBox(Scrollable):
+class ScrollableBox(Scrollable, Box, ShellWidget):
     def __init__(self, spacing=0, vertical=False, children=[], homogeneous=False, **kwargs):
         Scrollable.__init__(self)
-        Bindable.__init__(self)
-
-        self.box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL if not vertical else Gtk.Orientation.VERTICAL,
-                         spacing=spacing,
-                         homogeneous=homogeneous,)
-    
+        Box.__init__(self, spacing=spacing, vertical=vertical, children=children, homogeneous=homogeneous)
+        ShellWidget.__init__(self)

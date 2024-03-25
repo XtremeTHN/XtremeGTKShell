@@ -8,6 +8,8 @@ class Box(Gtk.Box, Bindable):
                          homogeneous=homogeneous,
                          **kwargs)
         Bindable.__init__(self)
+        
+        
         self.appends(*children)
 
     def appends(self, *args):

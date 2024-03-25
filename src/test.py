@@ -1,6 +1,6 @@
 from xgs.widgets.window import Window
 from xgs.widgets.scroll import Scrollable
-from xgs.widgets.box import Box
+from xgs.widgets.label import Label
 
 import gi
 gi.require_version("Adw","1")
@@ -21,15 +21,10 @@ def TopBarWindow():
     # )
     return Window(
         "test",
-        child=Scrollable(
-            vscroll="always",
-            hscroll="always",
-            child=Box(
-                children=[
-                    Gtk.Label(label="kitty")
-                ]
-            )
-        )
+        child=Label(label="Hi"),
+        layer="top",
+        anchor=["top","left","right"],
+        exclusive=False
     )
 
 TopBarWindow()

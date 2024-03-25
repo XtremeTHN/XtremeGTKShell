@@ -1,14 +1,12 @@
 import sys
+import traceback
+
+from pystyle import Colorate, Colors
 
 class Format:
     end = '\033[0m'
     underline = '\033[4m'
     bold = '\033[1m'
-
-    class Colors:
-        red = '\u001b[31m'
-        light_red = '\033[1;31m'
-        green = '\u001b[32m'
 
 def bold(msg) -> str:
     return f"{Format.bold}{msg}{Format.end}"
@@ -17,17 +15,22 @@ def underlined(msg) -> str:
     return Format.underline + msg + Format.end
 
 def color(string, color) -> str:
-    if (n:=getattr(Format.Colors, color)) is not None:
-        return f"{n}{string}{Format.end}"
-    else:
-        return string
+    return Colorate.Horizontal(color, string)
 
-def info(string):
-    print(underlined(bold(color("INFO:", "green"))), string)
+def info(*args):
+    func = traceback.extract_stack()[-2]
+    print(underlined(bold(color(f"{func.name} > INFO:", Colors.green_to_yellow))), *args)
+
+def debug(*args):
+    func = traceback.extract_stack()[-2]
+    if "--debug" in sys.argv:
+        print(underlined(bold(color(f"{func.filename.split('/')[-1]}:{func.lineno} > {func.name} > DEBUG:", Colors.blue_to_cyan))), *args)
 
 def warn(*args):
-    print(underlined(bold(color("WARNING:", "light_red"))), *args)
+    func = traceback.extract_stack()[-2]
+    print(underlined(bold(color(f"{func.filename.split('/')[-1]}:{func.lineno} > {func.name} > WARNING:", Colors.red_to_yellow))), *args)
 
 def error(*args, exit_code=1):
-    print(underlined(bold(color("ERROR:", "red"))), *args)
+    func = traceback.extract_stack()[-2]
+    print(underlined(bold(color(f"{func.filename.split('/')[-1]}:{func.lineno} > {func.name} > ERROR:", Colors.red_to_blue))), *args)
     sys.exit(exit_code)

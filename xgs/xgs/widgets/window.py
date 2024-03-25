@@ -2,9 +2,10 @@ from gi.repository import Gtk, Gdk, GObject, GLib
 from gi.repository import Gtk4LayerShell as LayerShell
 
 from xgs.utils import GArray
-from xgs.style import info, error, warn
+from xgs.style import info, debug, error, warn
 from xgs.widgets.misc import ShellWidget
-from xgs.services.binding import Bindable
+
+from typing import Literal, List
 
 def get_monitor(gdk_display: Gdk.Display, mon_id):
     mon_vec = gdk_display.get_monitors()
@@ -12,7 +13,10 @@ def get_monitor(gdk_display: Gdk.Display, mon_id):
 
 class Window(Gtk.Window, ShellWidget):
     app=None
-    def __init__(self, name, layer: str="top", child=None, monitor=0, anchor=[], margins=[], className="", width=0, height=0, exclusive=True):
+    def __init__(self, name, layer: Literal["top", "bottom", "overlay", "background"]="top", 
+                 child=None, monitor=0, anchor: List[Literal["top", "right", "bottom", "left"]]=[], margins=[], className="", width=0, 
+                 height=0, exclusive=True):
+        
         Gtk.Window.__init__(self, application=Window.app)
         ShellWidget.__init__(self)
 
@@ -37,7 +41,7 @@ class Window(Gtk.Window, ShellWidget):
         if margins != []:
             self.set_margins(margins)
 
-        print('presenting')
+        info(f'Showing window {name}...')
         self.present()
 
     def name(self):
@@ -47,7 +51,7 @@ class Window(Gtk.Window, ShellWidget):
         return 'unknown' if not (n:=Gtk.Window.get_name(self)) else n
    
     def set_monitor(self, mon_id):
-        info(f"Setting monitor on window {self.get_name()}...")
+        debug(f"Setting monitor on window {self.get_name()}...")
 
         mon = Gdk.Display.get_default()
         if mon is not None:
@@ -55,7 +59,7 @@ class Window(Gtk.Window, ShellWidget):
             self._monitor = mon_id
    
     def set_anchor(self, anchors: list[str]): 
-        info("Setting anchors")
+        debug("Setting anchors")
         length = len(anchors)
         if length > 4:
             anchors = anchors[:3]
@@ -69,7 +73,7 @@ class Window(Gtk.Window, ShellWidget):
         self._anchor.list = anchors
    
     def set_exclusive(self, exclusive):
-        print("setting exclusive")
+        debug("Setting exclusive")
         if exclusive is True:
             LayerShell.auto_exclusive_zone_enable(self)
         else:

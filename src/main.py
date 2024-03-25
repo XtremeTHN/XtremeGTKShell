@@ -1,7 +1,6 @@
 from ctypes import CDLL
 import importlib.util
 
-#CDLL('/usr/local/lib/libgtk4-layer-shell.so')
 CDLL('libgtk4-layer-shell.so')
 
 import os
@@ -9,7 +8,6 @@ import gi
 gi.require_versions({'Gtk': '4.0', 'Gtk4LayerShell': '1.0'})
 
 from gi.repository import Gtk
-from gi.repository import Gtk4LayerShell
 
 from xgs.widgets.window import Window
 from xgs.style import warn, error, info
