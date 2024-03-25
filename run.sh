@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd xgs
-python3 setup.py install > /dev/null 2>&1
-cd ..
+pip install xgs/ > /dev/null 2>&1
 
 python3 src/main.py $@
