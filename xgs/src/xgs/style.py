@@ -32,5 +32,5 @@ def warn(*args):
 
 def error(*args, exit_code=1):
     func = traceback.extract_stack()[-2]
-    print(underlined(bold(color(f"{func.filename.split('/')[-1]}:{func.lineno} > {func.name} > ERROR:", Colors.red_to_blue))), *args)
+    print(underlined(bold(color(f"{func.filename.split('/')[-1]}:{func.lineno} > {func.name} > ERROR:", Colors.dark_red))), *args)
     sys.exit(exit_code)

@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "xgs"
+version = "0.1.0"
+description = "A package made for creating a gtk shell (heavily inspired on ags)"
+authors = ["Axel Valles"]
+license = "Apache License 2.0"
+readme = "README.md"
+
+[tool.poetry.scripts]
+xgs = "xgs.cli:main"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pygobject = "^3.48.1"
+pygobject-stubs = "^2.10.0"
+pystyle = "^2.9"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
