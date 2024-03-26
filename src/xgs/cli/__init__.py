@@ -15,7 +15,7 @@ def main():
     parser = argparse.ArgumentParser(prog="xgs", description="XtremeGtkShell is heavily inspired of Aylur's Gtk Shell")
     
     parser.add_argument("-c", "--config", action="store", default="~/.config/xgs/config.py", help="A path pointing to a config file")
-    parser.add_argument("-d", "--debug", action="store", help="If it's true, then it will show debug messages")
+    parser.add_argument("-d", "--debug", action="store_true", help="If it's true, then it will show debug messages")
     parser.add_argument("-i", "--init", help="Initializes a virtual environment with pygobject and pygobject-stubs installed")
     
     args = parser.parse_args()    

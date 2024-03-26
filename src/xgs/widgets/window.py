@@ -26,6 +26,7 @@ class Window(Gtk.Window, ShellWidget):
         LayerShell.init_for_window(self)
         LayerShell.set_layer(self, getattr(LayerShell.Layer, layer.upper()))
         LayerShell.set_namespace(self, name)
+        self.set_name(name)
 
         self.monitor = monitor
         self.anchor = anchor
@@ -39,7 +40,7 @@ class Window(Gtk.Window, ShellWidget):
             self.set_child(child)
 
         if margins != []:
-            self.set_margins(margins)
+            self.set_margins(margins, is_window=True)
 
         info(f'Showing window {name}...')
         self.present()

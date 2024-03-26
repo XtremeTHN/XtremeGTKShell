@@ -1,12 +1,14 @@
 from gi.repository import Gtk
-from xgs.style import info
+from gi.repository import Gtk4LayerShell as LayerShell
+
+from xgs.style import info, debug
 from xgs.services.binding import Bindable
 
 class ShellWidget(Bindable, Gtk.Widget):
     def __init__(self):
         Bindable.__init__(self)
 
-    def set_margins(self, margins: list[int]):
+    def set_margins(self, margins: list[int], is_window=False):
         """
             Set's the margins.
             Reminder: margins = [top, right, bottom, left]
@@ -18,10 +20,17 @@ class ShellWidget(Bindable, Gtk.Widget):
         bottom = margins[2] if length > 2 else right
         left = margins[3] if length > 3 else bottom
     
-        self.set_margin_top(top)
-        self.set_margin_end(right)
-        self.set_margin_bottom(bottom)
-        self.set_margin_start(left)
+        debug(f"Setting margins: {top}, {right}, {bottom}, {left}")
+        if is_window is True:
+            LayerShell.set_margin(self, LayerShell.Edge.TOP, top)
+            LayerShell.set_margin(self, LayerShell.Edge.RIGHT, right)
+            LayerShell.set_margin(self, LayerShell.Edge.BOTTOM, bottom)
+            LayerShell.set_margin(self, LayerShell.Edge.LEFT, left)
+        else:
+            self.set_margin_top(top)
+            self.set_margin_end(right)
+            self.set_margin_bottom(bottom)
+            self.set_margin_start(left)
 
     def set_class_name(self, className: str):
         self.set_css_name(className)
