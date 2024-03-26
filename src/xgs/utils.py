@@ -1,8 +1,14 @@
-import time, threading
+import importlib.util
+import threading
+import time
+import sys
+import os
 
-from gi.repository import GObject, Gio, GLib, Gtk, Gdk
+from gi.repository import GObject, Gio, Gtk
 
-from xgs.style import info, warn, error
+from xgs.style import info, warn, debug, error
+
+CONFIG_PATH=os.path.expanduser("~/.config/xgs")
 
 class GArray(GObject.GObject):
     def __init__(self):
@@ -67,3 +73,20 @@ def lookupIcon(icon, size=16):
 
 def iconExists(icon_name):
     return Gtk.IconTheme.new().has_icon(icon_name)
+
+def load_conf_file(path):
+    path = os.path.expanduser(path)
+    
+    if os.path.exists(path):
+        debug(f"Loading config script from '{path}'...")
+        
+        spec = importlib.util.spec_from_file_location("Config", path)
+        if spec is None:
+            error("Failed to load config script. spec is None")
+            sys.exit(1)
+            
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    else:
+        error(f"Config file '{path}' doesn't exists")
+        
