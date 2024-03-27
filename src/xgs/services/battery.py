@@ -1,11 +1,12 @@
 from gi.repository import GObject, GLib, Gio
+from xgs.style import service_debug
 # from xgs.utils import setInterval
 
 class DeviceState:
     CHARGING = 1
     FULLY_CHARGED = 4
 
-class Battery(GObject.GObject):
+class _battery(GObject.GObject):
     percentage = GObject.Property(type=int, minimum=0, maximum=100, default=0, nick="percentage")
     charging = GObject.Property(type=bool, default=False, nick="charging")
     available = GObject.Property(type=bool, default=False, nick="available")
@@ -37,11 +38,6 @@ class Battery(GObject.GObject):
         
     def sync(self, *args):
         self.proxy.GetAll("(s)", "org.freedesktop.UPower.Device", result_handler=self.__update_all_props)
-
-
-    # def sync(self):
-    #     self.get_props()
-        # return GLib.SOURCE_CONTINUE
         
     def __update_all_props(self, _, result, __):
         if isinstance(result, Exception):
@@ -77,45 +73,6 @@ class Battery(GObject.GObject):
         if self_prop is not None:
             self.notify(self_prop)
         return self.__props[upower_prop]
-
-
-# class Battery:
-#     def __init__(self) -> None:
-#         self.con = Gio.DBusObjectManagerClient(
-#             bus_type=Gio.BusType.SYSTEM,
-#             flags=Gio.DBusObjectManagerClientFlags.NONE,
-#             object_path="/org/freedesktop/UPower/devices/DisplayDevice"
-#         )
-        
-#         self.con.connect("interface-proxy-properties-changed", self.__on_props_changed)
     
-#     def __on_props_changed(self,
-#                            dbus_client: Gio.DBusObjectManagerClient,
-#                            object_proxy: Gio.DBusObjectProxy,
-#                            interface_proxy: Gio.DBusProxy,
-#                            changed_props: GLib.Variant,
-#                            invalidated_props: list):
-        
-#         print(changed_props.unpack())
-        
-def commands(batt):
-    exec_locals = {"batt":batt}
-    while True:
-        try:
-            cmd = input("> ")
-            if cmd in exec_locals:
-                print(cmd)
-                continue
-            exec(cmd, {}, exec_locals)
-        except (KeyboardInterrupt, EOFError):
-            break
-        except Exception as e:
-            print(e, " ".join(e.args))
-            continue
-
-bat = Battery()
-
-import threading
-threading.Thread(target=commands, args=[bat]).start()
-
-GLib.MainLoop().run()
+    
+Battery = _battery()
