@@ -31,6 +31,12 @@ def debug(*args):
     
     if "--debug" in sys.argv:
         print(underlined(bold(color(f"{func.filename.split('/')[-1]}:{func.lineno} > {func.name} > DEBUG:", Colors.blue_to_cyan))), *args)
+        
+def service_debug(*args):
+    func = traceback.extract_stack()[-2]
+    
+    if "--service-debug-msg" in sys.argv:
+        print(underlined(bold(color(f"{func.filename.split('/')[-1]}:{func.lineno} > ServiceMsg > {func.name} > DEBUG:", Colors.blue_to_cyan))), *args)
 
 def warn(*args):
     func = traceback.extract_stack()[-2]
