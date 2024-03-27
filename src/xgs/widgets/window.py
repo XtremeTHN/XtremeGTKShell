@@ -14,14 +14,28 @@ def get_monitor(gdk_display: Gdk.Display, mon_id):
 class Window(Gtk.Window, ShellWidget):
     app=None
     def __init__(self, name, layer: Literal["top", "bottom", "overlay", "background"]="top", 
-                 child=None, monitor=0, anchor: List[Literal["top", "right", "bottom", "left"]]=[], margins=[], className="", width=0, 
+                 child=None, monitor=0, anchor: List[Literal["top", "right", "bottom", "left"]]=[], margins=[], className: str | list="", width=0, 
                  height=0, exclusive=True):
         
         Gtk.Window.__init__(self, application=Window.app)
         ShellWidget.__init__(self)
 
         self.set_default_size(width, height) 
-        self.set_css_name(className)
+
+        # Checks if className is a string, if it's true, appends to the css class names
+        if type(className) is str and className != "":
+            self.add_css_class(className)
+            
+        # If the className is a list, them parse it and add all of his contents to the css_classes
+        elif type(className) is list and className != []:
+            for index, _class in enumerate(className):
+                if type(_class) is not str:
+                    warn("Classname list item is not str.")
+                    debug(f"On index {index}")
+                    continue
+                
+                self.add_css_class(_class)
+        
 
         LayerShell.init_for_window(self)
         LayerShell.set_layer(self, getattr(LayerShell.Layer, layer.upper()))

@@ -28,6 +28,7 @@ def info(*args):
 
 def debug(*args):
     func = traceback.extract_stack()[-2]
+    
     if "--debug" in sys.argv:
         print(underlined(bold(color(f"{func.filename.split('/')[-1]}:{func.lineno} > {func.name} > DEBUG:", Colors.blue_to_cyan))), *args)
 
