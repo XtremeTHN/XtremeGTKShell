@@ -4,7 +4,7 @@ import time
 import sys
 import os
 
-from gi.repository import GObject, Gio, Gtk
+from gi.repository import GObject, Gio, Gtk, GLib
 
 from xgs.style import info, warn, debug, error
 
@@ -90,3 +90,21 @@ def load_conf_file(path):
     else:
         error(f"Config file '{path}' doesn't exists")
         
+def TestService(**_locals):
+    def commands(_locals: dict):
+        exec_locals = _locals
+        while True:
+            try:
+                cmd = input("> ")
+                
+                print(exec_locals.get(cmd))
+                exec(cmd, {}, exec_locals)
+            except (KeyboardInterrupt, EOFError):
+                break
+            except Exception as e:
+                print(e, " ".join(e.args))
+                continue
+
+    threading.Thread(target=commands, args=[_locals]).start()
+
+    GLib.MainLoop().run()

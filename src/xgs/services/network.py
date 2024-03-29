@@ -7,6 +7,7 @@ from typing import Callable, LiteralString
 
 from xgs.services.service import Service
 from xgs.style import warn
+from xgs.utils import TestService
 
 _ACCESS_POINT_ICON = [
     [80, 'network-wireless-signal-excellent-symbolic'],
@@ -37,7 +38,7 @@ class AccessPoint(Service):
             
         self.last_seen: int = access_point.props.last_seen
         self.strength: int = access_point.props.strength
-        self.icon_name: str = list(filter(lambda threshold: threshold[0] <= self.strength, _ACCESS_POINT_ICON))[-1]
+        self.icon_name: str = list(filter(lambda threshold: threshold[0] <= self.strength, _ACCESS_POINT_ICON))[0][1]
         self.active: bool = active
     
 class Wifi(Service):
@@ -61,12 +62,15 @@ class Wifi(Service):
     
     def __activate(self, *_):
         if self.__client.props.wireless_enabled is True:
+            self.enabled = True
+            
             self.device.request_scan_async()
             _connect_multiple(self.device,
                             ["notify::access-points", lambda *_: self.__update_ap()],
                             ["access-point-added", lambda *_: self.emit("changed")],
                             ["access-point-removed", lambda *_: self.emit("changed")])
-        else:            
+        else:
+            self.enabled = False
             for x in self.__signals_ids:
                 try:
                     self.__client.disconnect(x)
@@ -87,34 +91,21 @@ class Wifi(Service):
 
     @enabled.setter
     def enabled(self, enabled: bool):
+        self.notify("enabled")
         self.__client.wireless_set_enabled(enabled)
         
     @GObject.Property(nick="access-points")
     def access_points(self):
+        self.notify("access-points")
         return self.__aps
         
-    # @GObject.Property(nick="strength")
-    # def strength(self):
-        # self.
-        
-wifi = Wifi(NM.Client.new())
+    def scan(self, cb=None):
+        """Starts an async scan
 
-def commands(batt):
-    exec_locals = {"batt":batt}
-    while True:
-        try:
-            cmd = input("> ")
-            if cmd in exec_locals:
-                print(cmd)
-                continue
-            exec(cmd, {}, exec_locals)
-        except (KeyboardInterrupt, EOFError):
-            break
-        except Exception as e:
-            print(e, " ".join(e.args))
-            continue
+        Args:
+            cb (callable, optional): A callback, it will be called when scan finishes. Needs to accept this three arguments, src_obj: Network, res, user_data. Defaults to None.
+        """
+        self.device.request_scan_async(callback=cb)
 
-import threading
-threading.Thread(target=commands, args=[wifi]).start()
-
-GLib.MainLoop().run()
+Network = Wifi(NM.Client.new())
+# TestService(network=Network)

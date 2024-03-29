@@ -6,11 +6,11 @@ from gi.repository import Gtk, Gio, GLib
 from typing import Literal
 
 class Icon(Gtk.Image, ShellWidget):
-    def __init__(self, icon: Bindable | str, size=16):
-        if iconExists(icon) is False:
-            warn(f"Icon '{icon}' doesn't exists")
+    def __init__(self, icon: Bindable | str, size=16, **kwargs):
+        # if iconExists(icon) is False:
+        #     warn(f"Icon '{icon}' doesn't exists")
         
-        Gtk.Image.__init__(self, pixel_size=size)
+        Gtk.Image.__init__(self, pixel_size=size, **kwargs)
         if isinstance(icon, Bindable) is True:
             self._create_binding(icon)
         else:
@@ -19,9 +19,9 @@ class Icon(Gtk.Image, ShellWidget):
         ShellWidget.__init__(self)
         
 class Image(Gtk.Picture, ShellWidget):
-    def __init__(self, image_path: Bindable | str="", content_fit: Literal["fill", "contain", "cover", "scale_down"]="", keep_aspect_ratio=False, can_shrink=True):
+    def __init__(self, image_path: Bindable | str="", content_fit: Literal["fill", "contain", "cover", "scale_down"]="", keep_aspect_ratio=False, can_shrink=True, **kwargs):
         Gtk.Picture.__init__(content_fit=getattr(Gtk.ContentFit, content_fit, Gtk.ContentFit.FILL), 
-                        keep_aspect_ratio=keep_aspect_ratio, can_shrink=can_shrink)
+                        keep_aspect_ratio=keep_aspect_ratio, can_shrink=can_shrink, **kwargs)
         
         if isinstance(image_path, Bindable):
             self._create_binding(image_path, self.set_filename, str)
