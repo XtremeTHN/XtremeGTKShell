@@ -1,8 +1,8 @@
 from xgs.widgets.misc import ShellWidget, Bindable
-
+from xgs.style import warn
 from typing import Literal
 
-from gi.repository import Gtk, Gio, Pango
+from gi.repository import Gtk, Gio, Pango, GObject
 
 
 class Label(Gtk.Label, ShellWidget):
@@ -16,8 +16,6 @@ class Label(Gtk.Label, ShellWidget):
         ShellWidget.__init__(self)
         
         if isinstance(label, Bindable) is True:
-            self.bind_property("label", label, label.bindable_prop_name, transform_to=label.bindable_transform_func)
+            self._create_binding(label, self.set_label, str)
         else:
             self.set_label(label)
-        
-        ShellWidget.__init__(self)

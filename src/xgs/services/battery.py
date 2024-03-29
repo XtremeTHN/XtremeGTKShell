@@ -1,12 +1,15 @@
 from gi.repository import GObject, GLib, Gio
 from xgs.style import service_debug
-# from xgs.utils import setInterval
+
+from xgs.services.service import Service
+
+from typing import Literal
 
 class DeviceState:
     CHARGING = 1
     FULLY_CHARGED = 4
 
-class _battery(GObject.GObject):
+class _battery(Service):
     percentage = GObject.Property(type=int, minimum=0, maximum=100, default=0, nick="percentage")
     charging = GObject.Property(type=bool, default=False, nick="charging")
     available = GObject.Property(type=bool, default=False, nick="available")
@@ -24,19 +27,18 @@ class _battery(GObject.GObject):
                                        "/org/freedesktop/UPower/devices/DisplayDevice", "org.freedesktop.DBus.Properties",
                                        None)
         
-        self.proxy.connect('g-signal', self._on_properties_changed)
+        self.proxy.connect('g-signal', self.__on_properties_changed)
         
-        # GLib.idle_add(self.sync)
-        self.sync() 
+        self.__sync() 
         self.__props: dict = None
     
-    def _on_properties_changed(self, proxy, sender_name, signal_name, params: GLib.Variant):
+    def __on_properties_changed(self, proxy, sender_name, signal_name, params: GLib.Variant):
         if signal_name == "PropertiesChanged":
-            self.sync()
+            self.__sync()
         else:
             service_debug(f"Unknown signal recieved '{signal_name}'")
         
-    def sync(self, *args):
+    def __sync(self, *args):
         self.proxy.GetAll("(s)", "org.freedesktop.UPower.Device", result_handler=self.__update_all_props)
         
     def __update_all_props(self, _, result, __):
@@ -74,5 +76,7 @@ class _battery(GObject.GObject):
             self.notify(self_prop)
         return self.__props[upower_prop]
     
+    def bind(self, prop: Literal['percentage', 'charging', 'charged', 'icon-name', 'time-remaining', 'energy', 'energy-full', 'energy-rate']):
+        return super().bind(prop)
     
 Battery = _battery()

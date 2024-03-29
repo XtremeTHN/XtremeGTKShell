@@ -1,13 +1,14 @@
 from gi.repository import Gtk
 from gi.repository import Gtk4LayerShell as LayerShell
+from typing import Callable, Any
 
-from xgs.style import info, debug
+from xgs.style import info, debug, error, warn
 from xgs.services.binding import Bindable
 
-class ShellWidget(Bindable, Gtk.Widget):
+class ShellWidget(Gtk.Widget):
     def __init__(self):
-        Bindable.__init__(self)
-
+        ...
+        
     def set_margins(self, margins: list[int], is_window=False):
         """
             Set's the margins.
@@ -42,3 +43,25 @@ class ShellWidget(Bindable, Gtk.Widget):
         else:
             info("Adding css class: " + className + " to: " + self.get_name())
             self.add_css_class(className)
+            
+            
+    def _create_binding(self, bind_obj: Bindable, setter_func: Callable, expected_type: object):
+        def change(*_):
+            value = bind_obj.bindable_widget.get_property(bind_obj.bindable_prop_name)
+            if bind_obj.bindable_transform_func is not None:
+                value = bind_obj.bindable_transform_func(value)
+            
+            if isinstance(value, str):
+                setter_func(value)
+            else:
+                warn(f"Invalid type '{type(value).__name__}' expected {expected_type.__name__}")
+                return
+        bind_obj.bindable_widget.connect(f"notify::{bind_obj.bindable_prop_name}", change)
+            
+    def bind(self, prop):
+        prop_spec = self.find_property(prop)
+        if prop_spec is not None:
+            return Bindable(self, prop)
+        else:
+            error("No such property")
+            raise ValueError(f"The property {prop} doesn't exists")
