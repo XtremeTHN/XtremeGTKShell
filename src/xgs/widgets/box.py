@@ -10,24 +10,28 @@ class Box(Gtk.Box, ShellWidget):
                          **kwargs)
         ShellWidget.__init__(self)
         
-        self.__children = []
+        # self.__children = []
         
         self.appends(*children)
+    
+    # def append(self, widget):
+        # self.
 
     def appends(self, *args):
         for x in args:
-            self.__children.append(x)
+            # self.__children.append(x)
             self.append(x)
             
-    @GObject.Property
-    def children(self):
-        return self.__children
+    # @GObject.Property
+    # def children(self):
+    #     return self.__children
 
-    @children.setter
-    def children(self, children: list[Gtk.Widget]):
-        if len(self.__children) > 0:
-            for x in self.__children:
-                self.remove(x)
+    # @children.setter
+    # def children(self, children: list[Gtk.Widget]):
+    #     if len(self.__children) > 0:
+    #         for x in self.__children:
+    #             self.remove(x)
                 
-        self.__children = children
-        self.appends(children)
+    #     self.__children = children
+    #     self.appends(children)
+        

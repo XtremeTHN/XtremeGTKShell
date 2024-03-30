@@ -1,4 +1,5 @@
 import gi
+import threading
 
 gi.require_version("NM", "1.0")
 
@@ -6,7 +7,7 @@ from gi.repository import NM, GObject, GLib
 from typing import Callable, LiteralString
 
 from xgs.services.service import Service
-from xgs.style import warn
+from xgs.style import warn, debug
 from xgs.utils import TestService
 
 _ACCESS_POINT_ICON = [
@@ -66,7 +67,7 @@ class Wifi(Service):
             
             self.device.request_scan_async()
             _connect_multiple(self.device,
-                            ["notify::access-points", lambda *_: self.__update_ap()],
+                            ["notify::access-points", lambda *_: threading.Thread(target=self.__update_ap).start()],
                             ["access-point-added", lambda *_: self.emit("changed")],
                             ["access-point-removed", lambda *_: self.emit("changed")])
         else:
@@ -109,3 +110,5 @@ class Wifi(Service):
 
 Network = Wifi(NM.Client.new())
 # TestService(network=Network)
+
+GLib.MainLoop().run()
