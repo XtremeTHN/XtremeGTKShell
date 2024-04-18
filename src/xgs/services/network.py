@@ -8,7 +8,6 @@ from typing import Callable, LiteralString
 
 from xgs.services.service import Service
 from xgs.style import warn, debug
-from xgs.utils import TestService
 
 _ACCESS_POINT_ICON = [
     [80, 'network-wireless-signal-excellent-symbolic'],

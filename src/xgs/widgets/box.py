@@ -9,29 +9,28 @@ class Box(Gtk.Box, ShellWidget):
                          homogeneous=homogeneous,
                          **kwargs)
         ShellWidget.__init__(self)
-        
-        # self.__children = []
-        
+                
         self.appends(*children)
-    
-    # def append(self, widget):
-        # self.
 
     def appends(self, *args):
         for x in args:
-            # self.__children.append(x)
             self.append(x)
             
-    # @GObject.Property
-    # def children(self):
-    #     return self.__children
+    @GObject.Property
+    def children(self):
+        return None
 
-    # @children.setter
-    # def children(self, children: list[Gtk.Widget]):
-    #     if len(self.__children) > 0:
-    #         for x in self.__children:
-    #             self.remove(x)
-                
-    #     self.__children = children
-    #     self.appends(children)
-        
+    @children.setter
+    def children(self, children: list[Gtk.Widget]):
+        self.clear()
+        self.appends(children)
+    
+    def clear(self):
+        """Removes all children from the box
+        Does nothing if theres no child to be removed
+        """
+        # C Implementation for removing all childs of a box. From https://discourse.gnome.org/t/delete-all-children-from-a-gtkbox-in-gtk4/8279/3
+        childs = self.get_first_child()
+        while childs:
+            self.remove(childs)
+            childs = self.get_first_child()
