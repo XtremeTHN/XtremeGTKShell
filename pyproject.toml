@@ -1,22 +1,19 @@
 [tool.poetry]
-name = "dbusqrscanner"
+name = "xgs"
 version = "0.1.0"
-description = "A package made for scanning qr codes"
+description = "A package made for creating a gtk shell (heavily inspired on ags)"
 authors = ["Axel Valles"]
 license = "Apache License 2.0"
 readme = "README.md"
 
 [tool.poetry.scripts]
-dbusqrscanner = "dbusqrscanner.cli:main"
+xgs = "xgs.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-pygobject = "^3.50.0"
-opencv-python = "^4.10.0.84"
-dbus-python = "^1.3.2"
-
-[tool.poetry.group.dev.dependencies]
-pygobject-stubs = "^2.12.0"
+pygobject = "^3.48.1"
+pygobject-stubs = "^2.10.0"
+pystyle = "^2.9"
 
 [tool.poetry.dev-dependencies]
 
